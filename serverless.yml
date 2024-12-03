@@ -22,17 +22,12 @@ functions:
     events:
       - eventBridge:
           useCloudFormation: true
-          eventBus: !Ref EventBus
           pattern:
             source: 
               - my.application
 
 resources:
   Resources:
-    EventBus:
-      Type: AWS::Events::EventBus
-      Properties:
-        Name: MyNewCustomEventBus
     myEventBgPutEventRole:
       Type: AWS::IAM::Role
       Properties:

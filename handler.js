@@ -21,8 +21,7 @@ export const sendEvent = async (event) => {
         {
           Source: "my.application",
           DetailType: "MyCustomDetail",
-          Detail: JSON.stringify(body),
-          EventBusName: "MyNewCustomEventBus",
+          Detail: JSON.stringify(body)
         },
       ],
     };
