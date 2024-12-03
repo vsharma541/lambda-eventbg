@@ -1,0 +1,61 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: vsrmmt123
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: lambda-eventbg
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+
+functions:
+  sendEvent:
+    role: myEventBgPutEventRole
+    handler: handler.sendEvent
+    events:
+      - httpApi:
+          path: /sending
+          method: post
+  
+  receiveEvent:
+    handler: recHandler.receiveEvent
+    events:
+      - eventBridge:
+          useCloudFormation: true
+          eventBus: !Ref EventBus
+          pattern:
+            source: 
+              - my.application
+
+resources:
+  Resources:
+    EventBus:
+      Type: AWS::Events::EventBus
+      Properties:
+        Name: MyNewCustomEventBus
+    myEventBgPutEventRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: MyEventBgPutEventRole
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: MyEventBgPutEventRolePolicy
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - events:Put*
+                  Resource: "*"
+
+
+
+plugins:
+  - serverless-offline
